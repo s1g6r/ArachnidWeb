@@ -1,21 +1,28 @@
-# The Web
+# VEX Scan
 
-**[app.2360arachnid.com](https://app.2360arachnid.com)** · by VEX team 2360A Arachnid
+**app.2360arachnid.com** · by VEX team 2360A Arachnid
 
-Every alliance in VEX V5 Robotics Competition, spun into one web.
+Point your phone at a VEX V5RC robot's license plate and the team's card flips up:
+rating and world rank, record, best skills, whether they've qualified for States or
+Worlds, and your odds allied with them and against them. Every team you scan goes
+into your Dex for that event.
 
-- **World web:** every team sits at its home town. Each thread is two teams that played on the same alliance, drawn in the order they first teamed up, so the whole season spins itself across the map. Press play to watch it again, or drag the slider through the season.
-- **Team web:** pick a team and its alliances form an orb web. Ring 1 is its partners and ring 2 is their partners. Hover or tap a team to see where and when they teamed up, and click it to move to that team's web. The panel shows how many teams are within two and three steps, how many steps away the World Champions are, its most frequent partner, its farthest partner, and every partnership in order.
-- **Six degrees of VEX:** link any two teams through the shortest chain of alliances, with a spider walking the chain. Each link in the chain is shareable.
+- **Reading plates.** The camera frame under the aim box is searched for a row of
+  character-shaped blobs (straightened using the plate's own angle), and only those
+  go to Tesseract OCR running in the browser. The read is then matched against the
+  teams registered at the event you picked, so a half-read plate still lands on the
+  right team. On synthetic plates with tilt, blur, glare and clutter it reads about
+  93% of single frames correctly; the scanner reads several frames a second and
+  waits for a confident match.
+- **Data** comes from [stats.2360arachnid.com](https://stats.2360arachnid.com)
+  (`scan.json`, rebuilt with the stats site), with a bundled copy as the fallback.
+  Odds use the stats site's rating model.
+- **Offline.** Once loaded, the app and the plate reader are cached, so it keeps
+  working on bad venue wifi.
+- Nothing leaves your phone: no camera images are uploaded, and your team and Dex
+  are stored in your browser.
 
-Seasons:
-- **Push Back (2025–26):** the complete season, with 165,072 alliance pairs between 12,612 teams.
-- **Override (2026–27):** live, read from [stats.2360arachnid.com](https://stats.2360arachnid.com), which updates during events.
+The Web (every alliance this season on one map) lives at [/web/](web/).
 
-## How it's built
-
-There are no libraries or build step: `index.html`, `app.js` and `style.css` draw on a canvas. The data is `web.json`, published by [VexPredict](https://github.com/s1g6r/VexPredict) (`vexpredict/web.py`) from official match results:
-- `data/push-back.json` is the finished season.
-- Override loads from the stats site, with `data/override.json` as an offline fallback.
-
-Run it locally with `python3 -m http.server`, then open http://localhost:8000.
+Plain HTML, CSS and JavaScript; no build step. Tesseract.js (Apache 2.0) is vendored
+in `vendor/tesseract/`.
