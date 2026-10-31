@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The Web · 2360A Arachnid</title>
+<meta name="description" content="Every alliance in VEX V5RC, spun into one web. Explore any team's web of partners and find the chain of alliances that links any two teams.">
+<meta name="theme-color" content="#07050a">
+<link rel="icon" href="https://2360arachnid.com/favicon-48.png">
+<link rel="apple-touch-icon" href="https://2360arachnid.com/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rye&family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<canvas id="web" aria-label="The alliance web" role="img"></canvas>
+
+<header class="bar">
+  <a class="brand" href="#" id="home" aria-label="The Web, back to the world view">
+    <img src="https://2360arachnid.com/brand/logo-320.webp" alt="" width="34" height="34">
+    <span><b>The Web</b><small>by 2360A Arachnid</small></span>
+  </a>
+  <form class="find" id="find" role="search" autocomplete="off">
+    <label class="sr" for="q">Find a team</label>
+    <input id="q" type="search" placeholder="Find a team, e.g. 2360A" enterkeyhint="go" spellcheck="false">
+    <ul id="suggest" class="suggest" hidden></ul>
+  </form>
+  <div class="season" role="group" aria-label="Season">
+    <button id="s-push-back" data-season="push-back" aria-pressed="true">Push Back<small>2025–26</small></button>
+    <button id="s-override" data-season="override" aria-pressed="false">Override<small>2026–27 · live</small></button>
+  </div>
+</header>
+
+<section class="intro" id="intro">
+  <p class="eyebrow">Every alliance, spun into one web</p>
+  <h1>Who has your team<br>teamed up with?</h1>
+  <p>Each thread is two teams that played on the same alliance this season, drawn between their home towns in the order they first teamed up. Pick a team to see its web, or link any two teams through the alliances between them.</p>
+</section>
+
+<div class="hud" id="hud">
+  <button id="play" aria-label="Pause">❚❚</button>
+  <div class="hud-text"><b id="hud-date">–</b><span id="hud-count">–</span></div>
+  <input id="scrub" type="range" min="0" max="1000" value="0" aria-label="Season progress">
+</div>
+
+<aside class="panel" id="panel" hidden aria-live="polite"></aside>
+
+<div class="tip" id="tip" hidden></div>
+<div class="loading" id="loading"><span class="spin"></span><span id="loading-text">Spinning the web…</span></div>
+<noscript><p class="noscript">The Web needs JavaScript to draw.</p></noscript>
+<script src="app.js"></script>
+</body>
+</html>
