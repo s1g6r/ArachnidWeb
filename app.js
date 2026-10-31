@@ -647,7 +647,7 @@ function setHash() {
   const parts = [`s=${S.season}`];
   if (S.mode === "path" && S.path) parts.push(`p=${encodeURIComponent(D.t.num[S.path.a])},${encodeURIComponent(D.t.num[S.path.b])}`);
   else if (S.team >= 0) parts.push(`t=${encodeURIComponent(D.t.num[S.team])}`);
-  history.replaceState(null, "", "#" + parts.join("&"));
+  try { history.replaceState(null, "", "#" + parts.join("&")); } catch { /* some embedded views don't allow it */ }
 }
 function readHash() {
   const h = new URLSearchParams(location.hash.slice(1));
