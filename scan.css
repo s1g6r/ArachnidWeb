@@ -118,7 +118,7 @@ label { display: block; font-weight: 700; margin-bottom: 6px; }
 .card-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
 .card-actions .primary { grid-column: 1 / -1; }
 .card-actions .ghost { margin: 0; min-height: 48px; font-size: 16px; background: var(--plum-2); }
-body.sheeted .tools, body.sheeted .hint { visibility: hidden; }
+body.sheeted .tools, body.sheeted .hint, body.sheeted .intro { visibility: hidden; }
 
 /* ---------- the card ---------- */
 .card { --frame: var(--alu); --fx: 50%; --fy: 50%; --rx: 0deg; --ry: 0deg; perspective: 1200px; width: min(360px, 100%); margin: 0 auto; }
