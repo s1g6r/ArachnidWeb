@@ -14,6 +14,10 @@ const SOURCES = {
   "override": ["https://stats.2360arachnid.com/data/override/web.json", "data/override.json"],
 };
 const SEASON_NAMES = { "push-back": "Push Back", "override": "Override" };
+// upcoming events and who has registered, from the stats site (live season only)
+const PLAN_URL = "https://stats.2360arachnid.com/data/override/plan.json";
+let planPromise = null;
+const loadPlan = () => (planPromise ??= fetch(PLAN_URL).then(r => (r.ok ? r.json() : null)).catch(() => null));
 const KM_MI = 0.621371;
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const fmt = n => Math.round(n).toLocaleString();
@@ -78,9 +82,10 @@ function prepare(raw) {
   const sidx = new Uint8Array(m);
   for (let k = 0; k < m; k++) sidx[k] = km[k] < 400 ? 0 : km[k] < 1600 ? 1 : 2;
   const byNum = new Map(t.num.map((x, i) => [String(x).toUpperCase(), i]));
+  const byId = new Map((t.id || []).map((x, i) => [x, i]));
   let top = 0;
   for (let i = 1; i < n; i++) if (t.r[i] > t.r[top]) top = i;
-  return { raw, t, n, P, m, deg, off, nb, pk, first, wx, wy, has, gx, gy, km, ok, sidx, byNum, e: raw.e, champ: raw.champ || [], top };
+  return { raw, t, n, P, m, deg, off, nb, pk, first, wx, wy, has, gx, gy, km, ok, sidx, byNum, byId, e: raw.e, champ: raw.champ || [], top };
 }
 
 function haversine(la1, lo1, la2, lo2) {
@@ -531,7 +536,7 @@ function showPanel(html) {
   $("#close").onclick = () => goWorld();
 }
 function teamPanel(c) {
-  const { dist } = bfs(c);
+  const { dist } = bfs(c);   // also used by nextEvent()
   let within2 = 0, within3 = 0, reach = 0;
   for (let i = 0; i < D.n; i++) { const d = dist[i]; if (d > 0) { reach++; if (d <= 2) within2++; if (d <= 3) within3++; } }
   const ns = neighbors(c).sort((x, y) => x.k - y.k);
@@ -561,6 +566,7 @@ function teamPanel(c) {
       ${ns.length ? `<li>First alliance: ${name(ns[0].j)} at ${esc(evName(D.P[ns[0].k * 5 + 4]))}, <b>${shortDate(evDate(D.P[ns[0].k * 5 + 4]))}</b></li>` : ""}
       <li>Won <b>${wins} of ${games}</b> alliance matches with partners. The whole web reaches <b>${fmt(reach)}</b> teams.</li>
     </ul>
+    <div id="nextev"></div>
     <h3>Link to another team</h3>
     <form class="connect" id="connect"><label class="sr" for="to">Team number</label><input id="to" placeholder="Team, e.g. ${esc(D.t.num[target[0]])}" autocomplete="off" spellcheck="false"><button class="btn">Find the chain</button></form>
     <p class="note" id="connect-msg"></p>
@@ -579,6 +585,31 @@ function teamPanel(c) {
     goPath(c, b);
   };
   $("#toworld").onclick = () => { S.mode = "world"; panel.hidden = false; S.orb = null; setHash(); updateChrome(); };
+  if (S.season === "override" && D.t.id) nextEvent(c, dist);
+}
+// Who at the team's next event is already in its web: partners, partners of
+// partners, and teams it has never been linked to.
+async function nextEvent(c, dist) {
+  const plan = await loadPlan();
+  const box = $("#nextev");
+  if (!plan || !box || S.team !== c) return;
+  const id = D.t.id[c], today = new Date().toISOString().slice(0, 10);
+  const ev = plan.events.find(e => e.date >= today && e.teams && e.teams.includes(id));
+  if (!ev) return;
+  const rows = ev.teams.filter(x => x !== id).map(x => {
+    const i = D.byId.get(x);
+    return { x, i, d: i == null ? -1 : dist[i] };
+  });
+  const near = rows.filter(r => r.d === 1).length, two = rows.filter(r => r.d === 2).length;
+  const label = d => (d === 1 ? "partner" : d === 2 ? "partner of a partner" : d > 2 ? `${d} steps` : "not linked yet");
+  rows.sort((a, b) => (a.d < 0) - (b.d < 0) || a.d - b.d);
+  const numOf = r => (r.i != null ? D.t.num[r.i] : "");
+  const shown = rows.filter(r => r.i != null).slice(0, 24);
+  box.innerHTML = `<h3>Your web at your next event</h3>
+    <p class="note"><b>${esc(ev.name)}</b>, ${shortDate(ev.date)}. Of the ${rows.length} other High School teams registered, you've partnered with <b>${near}</b> and <b>${two}</b> more are partners of your partners.</p>
+    <ul class="partners">${shown.map(r => `<li><button class="link" data-team="${r.i}">${esc(numOf(r))}</button><span class="n">${label(r.d)}</span><span></span></li>`).join("")}</ul>
+    ${rows.length > shown.length ? `<p class="note">${rows.length - shown.length} more registered team${rows.length - shown.length === 1 ? " hasn't" : "s haven't"} played a match this season yet.</p>` : ""}`;
+  wirePanel();
 }
 function pathPanel(P) {
   const a = D.t.num[P.a], b = D.t.num[P.b];
