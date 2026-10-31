@@ -85,6 +85,7 @@ function recordText(rec) {
 function cardHTML(t, color) {
   const ti = tier(t), me = meTeam(), o = odds(me, t);
   const q = [t.q & 1 ? "States" : "", t.q & 2 ? "Worlds" : ""].filter(Boolean);
+  const pend = [t.q & 4 ? "States" : "", t.q & 8 ? "Worlds" : ""].filter(Boolean);
   const pct = x => Math.round(x * 100);
   let oddsBlock;
   if (me && me.id === t.id) oddsBlock = `<p class="odds-note">That's you. Go scan someone else.</p>`;
@@ -110,6 +111,7 @@ function cardHTML(t, color) {
             <div><dt>Skills</dt>${skills}</div>
           </dl>
           ${q.length ? `<p class="quals">Qualified for ${q.join(" and ")}</p>` : ""}
+          ${pend.length ? `<p class="quals pending" title="Their award qualifies only if the event gets enough spots; RECF sets spot counts in January">${q.length ? "Also pending" : "Pending"} for ${pend.join(" and ")}</p>` : ""}
           ${oddsBlock}
         </div>
         <div class="rail"></div>
@@ -193,7 +195,9 @@ async function shareCard() {
     x.fillStyle = "#a99bb8"; x.font = "500 32px 'Space Grotesk'"; x.fillText(k, mx, cy0 + 770);
   });
   const q = [t.q & 1 ? "States" : "", t.q & 2 ? "Worlds" : ""].filter(Boolean);
+  const pend = [t.q & 4 ? "States" : "", t.q & 8 ? "Worlds" : ""].filter(Boolean);
   if (q.length) { x.fillStyle = "#7ee0a6"; x.font = "700 38px 'Space Grotesk'"; x.fillText(`Qualified for ${q.join(" and ")}`, W / 2, cy0 + 880); }
+  else if (pend.length) { x.fillStyle = "#f5c542"; x.font = "700 38px 'Space Grotesk'"; x.fillText(`Pending for ${pend.join(" and ")}`, W / 2, cy0 + 880); }
   x.fillStyle = "#a99bb8"; x.font = "500 32px 'Space Grotesk'"; x.fillText("Scanned with VEX Scan · app.2360arachnid.com", W / 2, H - 70);
   const blob = await new Promise(r => c.toBlob(r, "image/png"));
   const file = new File([blob], `${t.num}-vex-scan.png`, { type: "image/png" });
