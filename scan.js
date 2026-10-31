@@ -111,7 +111,7 @@ function cardHTML(t, color) {
             <div><dt>Skills</dt>${skills}</div>
           </dl>
           ${q.length ? `<p class="quals">Qualified for ${q.join(" and ")}</p>` : ""}
-          ${pend.length ? `<p class="quals pending" title="Their award qualifies only if the event gets enough spots; RECF sets spot counts in January">${q.length ? "Also pending" : "Pending"} for ${pend.join(" and ")}</p>` : ""}
+          ${pend.length ? `<p class="quals pending" title="Their award qualifies only if the event gets enough spots, and the event hasn't posted its count yet">${q.length ? "Also pending" : "Pending"} for ${pend.join(" and ")}</p>` : ""}
           ${oddsBlock}
         </div>
         <div class="rail"></div>
