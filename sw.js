@@ -1,7 +1,7 @@
 /* VEX Scan offline cache: the app and the plate reader are cached for good
    (venue wifi is bad); team data is fetched fresh when there's a connection
    and served from the cache when there isn't. */
-const VERSION = "vexscan-4";
+const VERSION = "vexscan-5";
 const SHELL = ["./", "index.html", "scan.css", "scan.js", "ocr.js", "manifest.webmanifest", "icons/icon-192.png",
   "vendor/tesseract/tesseract.min.js", "vendor/tesseract/worker.min.js", "data/scan-override.json"];
 const READER = ["vendor/tesseract/tesseract-core-simd-lstm.wasm.js", "vendor/tesseract/tesseract-core-lstm.wasm.js",

@@ -116,7 +116,7 @@ label { display: block; font-weight: 700; margin-bottom: 6px; }
 .cardwrap { padding-top: max(18px, env(safe-area-inset-top)); }
 .caught { text-align: center; margin: 14px 0 0; font-weight: 700; color: var(--gold); min-height: 1.5em; }
 .card-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
-.card-actions .primary { grid-column: 1 / -1; }
+.card-actions .primary, .card-actions .wide { grid-column: 1 / -1; }
 .card-actions .ghost { margin: 0; min-height: 48px; font-size: 16px; background: var(--plum-2); }
 body.sheeted .tools, body.sheeted .hint, body.sheeted .intro { visibility: hidden; }
 

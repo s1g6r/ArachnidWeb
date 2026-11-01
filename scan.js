@@ -137,6 +137,9 @@ function showCard(t, { scanned = false, color = "red" } = {}) {
     : fresh ? `Caught! ${ev && ev.t.includes(t.i) ? `${caughtAt(ev)} of ${ev.t.length} at ${ev.name}.` : `${Object.keys(state.dex).length} in your Dex.`}`
     : "Already in your Dex.";
   $("#stats-link").href = `${STATS}/#/team/${t.id}`;
+  const me = meTeam(), cmp = $("#cmp-link");
+  cmp.hidden = !me || me.id === t.id;
+  if (me && me.id !== t.id) { cmp.href = `${STATS}/#/compare/${me.id}/${t.id}`; cmp.textContent = `Compare ${t.num} with ${me.num}`; }
   open("card-sheet");
   const card = $("#card");
   if (scanned && !reduceMotion) { card.classList.add("reveal"); }
